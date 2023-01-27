@@ -6,10 +6,10 @@ const Navigation = ({ userObj }) => {
         <nav>
             <ul>
                 <li>
-                    <Link to="/">{userObj}의 Home</Link>
+                    <Link to="/"> {userObj.displayName}의 Home</Link>
                 </li>
                 <li>
-                    <Link to="/profile">{userObj}의 Profile</Link>
+                    <Link to="/profile"> {userObj.displayName}의 Profile</Link>
                 </li>
                 <li>
                     <Link to="/HotPost">인기글</Link>

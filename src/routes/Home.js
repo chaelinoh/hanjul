@@ -24,11 +24,12 @@ const Home = ({ userObj }) => {
     const onSubmit = async (event) => {
         event.preventDefault();
         try {
-            const docRef = await addDoc(collection(dbService, "hanjuls"), {
+            const hanjulObj = await addDoc(collection(dbService, "hanjuls"), {
                 text: hanjul, createdAt: Date.now(),
                 creatorId: userObj.uid,
             });
-            console.log("Document written with ID:", docRef.id);
+            await addDoc(collection(dbService,"hanjuls"), hanjulObj);
+            console.log("Document written with ID:", hanjulObj.id);
         } catch (error) {
             console.error("Error adding document: ", error);
         }
