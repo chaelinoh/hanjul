@@ -1,9 +1,8 @@
 import { authService, dbService } from '../fBase';
-import {  updateDoc, addDoc, collection, onSnapshot, query, getDocs } from "firebase/firestore";
+import {  doc, updateDoc, addDoc, collection, onSnapshot, query, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
 import { UNSAFE_enhanceManualRouteObjects } from 'react-router-dom';
 import Hanjul from '../components/Hanjul'
-
 
 const Home = ({ userObj }) => {
     const [hanjul, setHanjul] = useState("");
@@ -40,6 +39,7 @@ const Home = ({ userObj }) => {
                 creatorId: userObj.uid,
                 hashtags: hashtags,
                 likes: [],
+                likeCount:0
             };
             await addDoc(collection(dbService, "hanjuls"), hanjulObj);
             console.log("Document written with ID:", hanjulObj.id);
@@ -58,28 +58,7 @@ const Home = ({ userObj }) => {
     };
 
 
-
-
-
-    const handleLike = async (hanjulObj) => {
-        const user = authService.currentUser;
-        const { likes } = hanjulObj;
-        const liked = likes.includes(user.uid);
-        try {
-            if (!liked) {
-                const newLikes = [...likes, user.uid];
-                const newLikeCount = hanjulObj.likeCount + 1;
-                await updateDoc(collection(dbService, "hanjuls"), hanjulObj.id, { likes: newLikes, likeCount: newLikeCount });
-            } else {
-                const newLikes = likes.filter(like => like !== user.uid);
-                const newLikeCount = hanjulObj.likeCount -1;
-                await updateDoc(collection(dbService,"hanjuls"), hanjulObj.id, {likes: newLikes, likeCount:newLikeCount});
-            }
-        }catch(error){
-            console.error(error);
-        }
-    };
-                
+  
             
 
 
@@ -92,7 +71,7 @@ const Home = ({ userObj }) => {
             </form>
             <div>
                 {filteredHanjuls.map((hanjul) => (
-                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} handleLike={handleLike} />
+                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid}  />
                 ))}
             </div>
             <form onSubmit={(e) => { searchHanjul(e) }}>
@@ -105,7 +84,7 @@ const Home = ({ userObj }) => {
             </form>
             <div>
                 {hanjuls.map((hanjul) => (
-                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} handleLike={handleLike} />
+                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} />
                 ))}
             </div>
         </div>

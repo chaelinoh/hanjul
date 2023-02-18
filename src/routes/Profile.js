@@ -19,6 +19,7 @@ const Profile = ({userObj}) => {
         const q = query(
             collection(dbService, "hanjuls"),
             where("creatorId","==",userObj.uid),
+            orderBy("createdAt","desc")
         );
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
@@ -28,7 +29,7 @@ const Profile = ({userObj}) => {
 
     useEffect(()=> {
         getMyHanjuls();
-    });
+    },[]);
 
 
     const onLogOutClick = () => {
