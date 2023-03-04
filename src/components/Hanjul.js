@@ -39,40 +39,39 @@ const Hanjul = ({ hanjulObj, isOwner }) => {
     };
 
     //좋아요 함수
-    const handleLike = async (hanjulObj) => {
-        //클릭에 따라 하트 색 바꿔주는 부분
-        const newLikeStatus = { ...hanjulObj };
-        if (!newLikeStatus.liked) {
-            newLikeStatus.liked = true;
-            newLikeStatus.likeCount++;
-        } else {
-            newLikeStatus.liked = false;
-            newLikeStatus.likeCount--;
-        }
-        setLikeStatus(newLikeStatus);
-
-        const hanjulRef = doc(dbService, "hanjuls", `${newLikeStatus.id}`);
+    const handleLike = async () => {
+        const hanjulRef = doc(dbService, "hanjuls", hanjulObj.id);
         const hanjulDoc = await getDoc(hanjulRef);
         
-        //likes필드에 id가 존재한다면 id삭제 후 likeCount - 1 해줌. 존재하지 않으면 그 반대.
         if (hanjulDoc.exists) {
             const likes = hanjulDoc.data().likes || [];
             const likeCount = hanjulDoc.data().likeCount || 0;
+    
+            // Update the liked and likeCount properties of likeStatus
             if (likes.includes(userId)) {
-                // remove the like if the user has already liked it
+                setLikeStatus({
+                    ...likeStatus,
+                    liked: false,
+                    likeCount: likeCount - 1
+                });
                 await updateDoc(hanjulRef, {
                     likes: likes.filter(like => like !== userId),
-                    likeCount: likeCount -1
+                    likeCount: likeCount - 1
                 });
             } else {
-                // add the like if the user hasn't liked it yet
+                setLikeStatus({
+                    ...likeStatus,
+                    liked: true,
+                    likeCount: likeCount + 1
+                });
                 await updateDoc(hanjulRef, {
                     likes: [...likes, userId],
-                    likeCount: likeCount +1
+                    likeCount: likeCount + 1
                 });
             }
         }
-    }
+    };
+    
 
 
 
