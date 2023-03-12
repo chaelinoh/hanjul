@@ -84,7 +84,7 @@ const Home = ({ userObj }) => {
             </form>
             <div>
                 {hanjuls.map((hanjul) => (
-                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} />
+                    <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} currentUserId={userObj.uid} />
                 ))}
             </div>
         </div>

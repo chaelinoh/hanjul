@@ -1,20 +1,20 @@
 import { authService, dbService } from "../fBase";
-import React, { useState } from "react";
-import { doc, deleteDoc, updateDoc, collection , getDoc} from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { doc, deleteDoc, updateDoc, collection, getDoc } from "firebase/firestore";
 import Home from "routes/Home";
 
 
-const Hanjul = ({ hanjulObj, isOwner }) => {
+const Hanjul = ({ hanjulObj, isOwner, currentUserId }) => {
     const [editing, setEditing] = useState(false);
+    const userId = authService.currentUser.uid;
+
     const [likeStatus, setLikeStatus] = useState({
-        liked: hanjulObj.likes.includes(hanjulObj.uid),
+        liked: hanjulObj.likes.includes(currentUserId),
         likeCount: hanjulObj.likeCount
     });
     const [newHanjul, setNewHanjul] = useState(hanjulObj.text);
     const HanjulTextRef = doc(dbService, "hanjuls", `${hanjulObj.id}`);
-    //const HanjullikeCountRef = doc(dbService, "hanjuls", `${hanjulObj.likeCount}`);
-    //const HanjullikesRef = doc(dbService, "hanjuls", `${hanjulObj.likes}`);
-    const userId = authService.currentUser.uid;
+
 
 
     const onDeleteClick = async () => {
@@ -71,6 +71,8 @@ const Hanjul = ({ hanjulObj, isOwner }) => {
             }
         }
     };
+
+    
     
 
 
@@ -92,8 +94,8 @@ const Hanjul = ({ hanjulObj, isOwner }) => {
                 ) : (
                     <>
                         <h4>{hanjulObj.text}</h4>
-                        <p>Likes:{hanjulObj.likeCount}</p>
                         <div>
+                            {}
                             {!isOwner && <button onClick={() => {handleLike(hanjulObj)}}>{likeStatus.liked ? "❤️" : "🤍"} {likeStatus.likeCount}</button>}
                         </div>
 
