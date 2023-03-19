@@ -1,40 +1,17 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTwitter,
+  faGoogle,
+  faGithub,
+} from "@fortawesome/free-brands-svg-icons";
+
+import AuthForm from 'components/AuthForm';
 import { getAuth,signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import {authService, firebaseInstance} from "../fBase";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 const Auth = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [newAccount, setNewAccount] = useState(true);
-    const [error, setError] = useState("");
-
-    const onChange = (event) => {
-        const { target: { name, value } ,} = event;
-        if (name === "email") {
-            setEmail(value);
-        } else if (name === "password") {
-            setPassword(value);
-        }
-    };
-
-    const onSubmit = async (event) => {
-        event.preventDefault();  //이벤트가 생기면 페이지가 새로고침 되는데 그것을 방지해주는 코드
-        try {
-            let data
-            const auth = getAuth();
-            if (newAccount) {
-                data = await createUserWithEmailAndPassword(
-                    auth, email, password
-                );
-            } else {
-                data = await signInWithEmailAndPassword(auth, email, password);
-            }
-            console.log(data);
-        } catch (error) {
-            setError(error.message);
-        }
-    };
-    const toggleAccount = () => setNewAccount(prev => !prev);
     const onSocialClick = async (event) => {
         const { 
             target: { name },
@@ -46,24 +23,25 @@ const Auth = () => {
             provider = new firebaseInstance.auth.GithubAuthProvider();
         }
         const data = await authService.signInWithPopup(provider);
-        console.log(data);
+
     };
 
     return (
-        <div>
-            <form onSubmit={onSubmit}>
-
-                <input name="email" type="text" placeholder='Email' required value={email} onChange={onChange} />
-                <input name="password" type="password" placeholder='Password' required value={password} onChange={onChange} />
-                <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
-                {error}
-            </form>
-            <span onClick={toggleAccount}>
-                {newAccount ? "Sign In" : "Create Account"}
-            </span>
-            <div>
-                <button onClick={onSocialClick} name="google">Continue with Google</button>
-                <button onClick={onSocialClick} name = "github">Continue with Github</button>
+        <div className="authContainer">
+        <FontAwesomeIcon
+          icon={faPencil}
+          color={"#00ff66"}
+          size="3x"
+          style={{ marginBottom: 30 }}
+        />
+            <AuthForm />
+            <div className="authBtns">
+                <button onClick={onSocialClick} name="google" className="authBtn">
+                    Continue with Google <FontAwesomeIcon icon={faGoogle} />
+                </button>
+                <button onClick={onSocialClick} name="github" className="authBtn">
+                    Continue with Github <FontAwesomeIcon icon={faGithub} />
+                </button>
             </div>
         </div>
     );

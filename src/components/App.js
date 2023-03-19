@@ -17,7 +17,7 @@ function App() {
         });
       }
       setUserObj(user);
-    }
+    } 
     setInit(true);
   });
   }, []);

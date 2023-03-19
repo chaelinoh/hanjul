@@ -9,16 +9,18 @@ import Hanjul from 'components/Hanjul';
 import { onSnapshot } from '@firebase/firestore';
 import { faCog, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HanjulFactory from 'components/HanjulFactory';
+import Profile from './Profile';
 
 
-const Profile = ({userObj}) => {
+const MyPage = ({userObj}) => {
 
     const [myHanjuls, setMyHanjuls] = useState([]);
 
     useEffect(() => {
     
         onSnapshot(
-          query(collection(dbService, "hanjuls"), where("creatorId","==",userObj.uid)), 
+          query(collection(dbService, "hanjuls"), where("creatorId","==",userObj.uid), orderBy("createdAt","desc")), 
           (snapshot) => {
           const hanjulArray = snapshot.docs.map((doc) => ({
             id: doc.id, 
@@ -61,31 +63,39 @@ const Profile = ({userObj}) => {
         }
     };
 
+    const timeChanger = (time) => {
+      const dateObj = new Date(time);
+      let dateStr = `${dateObj.getFullYear()}년 ${
+        dateObj.getMonth() + 1
+      }월 ${dateObj.getDate()}일 작성`;
+  
+      return dateStr;
+    };
+
+ 
+
      return (
       <div className="container">
 
-      <form onSubmit={onSubmit} className="profileForm">
-            <input onChange={onChange} type="text" placholder="Display name" value={newDisplayName} autoFocus className="formInput" />
-            <input
-          type="submit"
-          value="Update Profile"
-          className="formBtn"
-          style={{
-            marginTop: 10,
-          }}
-          />
-        </form>
-        <span className="formBtn cancelBtn logOut" onClick={onLogOutClick}>
-        Log Out
-      </span>
+        <nav>
+          <ul style={{ display: "flex", justifyContent: "right", marginTop: 10 }}>
+            <li>
+            <Link to="/profile">
+              <FontAwesomeIcon icon={faCog} color={"#ff9d00"} size="2x" />
+            </Link>
+            </li>
+          </ul>
+        </nav>
 
-
-
-
+        <div style={{ marginTop: 30 }}>
+                {myHanjuls.map((hanjul,{timestamp})=>(
+                <Hanjul key={hanjul.id} hanjulObj={hanjul} isOwner={hanjul.creatorId === userObj.uid} >{timeChanger(timestamp)}</Hanjul>
+                ))}
+            </div>
         </div>
      )
 
 
 };
 
-export default Profile;
+export default MyPage;

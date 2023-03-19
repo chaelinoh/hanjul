@@ -4,6 +4,7 @@ import App from './components/App';
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/storage";
+import "./style.css";
 
 
 

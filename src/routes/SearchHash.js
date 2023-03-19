@@ -1,0 +1,92 @@
+import React, { useEffect, useState } from 'react';
+import Hanjul from 'components/Hanjul';
+import Hashtag from 'components/Hashtag';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { dbService } from 'fBase';
+
+const SearchHash = ({ userObj, timestamp }) => {
+  const [hashtags, setHashtags] = useState([]);
+  const [hashDefault, setHashDefault] = useState(false);
+  const [hashHanjuls, setHashHanjuls] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchHashtag, setSearchHashtag] = useState('');
+  const [selectedHashtagArray, setSelectedHashtagArray] = useState([]);
+
+  //firebase에서 Hanjul리스트 가져오는 Effect Hook
+  useEffect(() => {
+    onSnapshot(query(collection(dbService, "hanjuls"),
+      orderBy('createdAt', 'desc')),
+      (snapshot) => {
+        const hanjulArray = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setHashHanjuls(hanjulArray);
+      });
+  }, []);
+
+  //해당 해시태그에 맞는 한줄을 골라내는 함수
+  const filteredHanjuls = hashHanjuls.filter(hanjul => hanjul.hashtags && hanjul.hashtags.includes(searchHashtag));
+
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setSearching(true);
+  }
+
+  const onBlur = () => {
+    setSearching(false);
+  }
+
+
+
+  //컴포넌트 렌더링
+  return (
+    <div className="container">
+      <form onSubmit={onSubmit}>
+        <input
+          className="factoryInput__input"
+          onChange={(e) => setSearchHashtag(e.target.value)}
+          placeholder={'해시태그를 입력하세요'}
+          style={{ marginTop: 10 }}
+        />
+        <button type="submit" onBlur={onBlur} >검색</button>
+      {searching && (
+        <div style={{ marginTop: 20 }}>
+          {filteredHanjuls.map((hanjul) => (
+            <Hanjul
+                key={hanjul.id}
+                hanjulObj={hanjul}
+                isOwner={hanjul.creatorId === userObj.uid}
+            />
+           ))}
+        </div>
+       )
+      }
+      
+      <Hashtag
+          selectedHashtagArray={selectedHashtagArray}
+          setHashtagsArray={setHashtags}
+          hashDefault={hashDefault}
+          setHashDefault={setHashDefault}
+      />
+      </form>
+
+      <div style={{ marginTop: 310 }}>
+        {hashHanjuls.map((hanjul, { timestamp }) => (
+          <Hanjul
+            key={hanjul.id}
+            hanjulObj={hanjul}
+            isOwner={hanjul.creatorId === userObj.uid}
+            hashtags={hashtags}
+            currentUserId={userObj.uid}
+            timestamp={timestamp} />
+        ))}
+      </div>
+
+    </div>
+    );
+};
+
+      
+export default SearchHash;
