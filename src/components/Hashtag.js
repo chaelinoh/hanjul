@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import SearchHash from 'routes/SearchHash';
 
 const HASHTAGS1 = [
   ['나', 100],
@@ -93,7 +94,7 @@ const CheckBox = styled.div`
 
 
 //단일 해시태그 체크박스 렌더링. 자식컴포넌트
-const HashtagButton = ({ tag, selectHashtag, hashDefault }) => {
+const HashtagButton = ({ tag, selectHashtag, hashDefault}) => {
   const [selected, setSelected] = useState(false);
 
   useEffect(() => {
@@ -104,6 +105,8 @@ const HashtagButton = ({ tag, selectHashtag, hashDefault }) => {
     setSelected(!selected);
     selectHashtag(event.target.innerText);
   };
+
+  
 
   return (
     <CheckBox name='hashtag' selected={selected} onClick={onHandleClick}>
@@ -132,6 +135,7 @@ const Hashtag = ({
       setHashtagsArray([...selectedHashtagArray, now]);
     }
   };
+
 
 
   return (

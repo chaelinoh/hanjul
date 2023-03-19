@@ -4,6 +4,7 @@ import Hashtag from 'components/Hashtag';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { dbService } from 'fBase';
 
+
 const SearchHash = ({ userObj, timestamp }) => {
   const [hashtags, setHashtags] = useState([]);
   const [hashDefault, setHashDefault] = useState(false);
@@ -38,19 +39,17 @@ const SearchHash = ({ userObj, timestamp }) => {
     setSearching(false);
   }
 
+  const onChangeHashtag = (e) => {
+    setSearchHashtag(hashtags[0]);
+    setSearching(true);
+  };
 
 
   //컴포넌트 렌더링
   return (
     <div className="container">
       <form onSubmit={onSubmit}>
-        <input
-          className="factoryInput__input"
-          onChange={(e) => setSearchHashtag(e.target.value)}
-          placeholder={'해시태그를 입력하세요'}
-          style={{ marginTop: 10 }}
-        />
-        <button type="submit" onBlur={onBlur} >검색</button>
+        <button type="submit" onClick={onChangeHashtag} onBlur={onBlur} >검색</button>
       {searching && (
         <div style={{ marginTop: 20 }}>
           {filteredHanjuls.map((hanjul) => (
@@ -65,7 +64,7 @@ const SearchHash = ({ userObj, timestamp }) => {
       }
       
       <Hashtag
-          selectedHashtagArray={selectedHashtagArray}
+          selectedHashtagArray={hashtags}
           setHashtagsArray={setHashtags}
           hashDefault={hashDefault}
           setHashDefault={setHashDefault}
